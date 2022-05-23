@@ -8,45 +8,49 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private const float spawnRate = 1.5f;
+    private float spawnRate = 1.5f;
     public List<GameObject> prefabs;
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameoverText;
     public Button restartButton;
+    public GameObject TitleScreen;
+
     private int score = 0;
-    public bool gameActive = true;
+    public bool gameActive = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    public void StartGame(int diff)
+    {
+        spawnRate = spawnRate / diff;
+        gameActive = true;
+        score = 0;
+        Debug.Log("Game spawn rate = " + spawnRate);
         StartCoroutine(SpawnTarget());
         UpdateScore(0);
-
-        
+        TitleScreen.gameObject.SetActive(false);
     }
 
     public void GameOver()
     {
+        gameActive = false;
         gameoverText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
-        gameActive = false;
-
     }
     IEnumerator SpawnTarget()
     {
         while (gameActive)
         {
             yield return new WaitForSeconds(spawnRate);
-            //UpdateScore(1);
             Instantiate(prefabs[Random.Range(0, prefabs.Count)]);
         }
         //return ;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void UpdateScore(int scoreDelta)
